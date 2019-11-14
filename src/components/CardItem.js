@@ -22,8 +22,8 @@ const useStyles = makeStyles(theme => ({
     margin: 20
   },
   media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
+    width: "100%",
+    // paddingTop: '56.25%', // 16:9
   },
   expand: {
     transform: 'rotate(0deg)',
@@ -63,11 +63,16 @@ export default function CardItem(props) {
         title={props.pokemon.name}
         subheader="September 14, 2016"
       />
+      {/*
       <CardMedia
         className={classes.media}
         image={props.pokemon.sprites.front_default}
         title="Paella dish"
       />
+      */}
+      <img className={classes.media}
+        src={props.pokemon.sprites.front_default}
+       />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
         {props.pokemon.name}
