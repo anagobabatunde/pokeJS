@@ -1,18 +1,18 @@
 import React from "react";
 import api from "../API/pokeApi";
-import CardItem from "./CardItem";
+import CardItem from "../components/CardItem";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default class Home extends React.Component {
   _loadPokemons() {
     this.setState({ isLoading: true });
-    for (let i = this.state.start; i <= this.state.end; i++) {
-      api.getPokemonById(i).then(data => {
+      api.getPokemons().then(data => {
         this.setState(
-          { pokemons: this.state.pokemons.concat(data), isLoading: false },
+          { pokemons: data.results, isLoading: false },() => {
+            console.log(this.state.pokemons)
+          }
         );
       });
-    }
   }
   _loadSpecs(url) {
     api.getPokemonSpecs(url).then(data => {
@@ -23,6 +23,10 @@ export default class Home extends React.Component {
     this._loadPokemons();
     // this.setState({ isLoading: true });
   }
+
+  // _toDetail(id) {
+
+  // }
   constructor(props) {
     super(props);
     this.state = {
@@ -34,6 +38,8 @@ export default class Home extends React.Component {
   }
 
   render() {
+    {console.log(this.props)}
+
     const useStyles = {
       container: {
         display: "flex",
@@ -60,15 +66,26 @@ export default class Home extends React.Component {
             borderColor: "red",
             width: "100%",
             height: "100%",
-            justifyContent: "center",
+            justifyContent: "space-Between",
             alignItems: "center",
             flexWrap: "wrap",
             overflow: 'scroll'
           }}
         >
-          {this.state.pokemons.map((pokemon, i) => (
-            <div key={i}>{<CardItem pokemon={pokemon} />}</div>
-          ))}
+          {this.state.pokemons.map((pokemon, i) => {
+                let urlImg = "https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other-sprites/official-artwork/";
+                let url_array = pokemon.url.split('/')
+                let id = url_array[url_array.length - 2]
+            return <div               style={{
+              height: "auto",
+              width: "auto",
+              display: "flex",
+              border: "solid",
+              borderColor: 'purple',
+              margin: 20
+            }} key={i}>{<CardItem pokemon={pokemon} img={`${urlImg}${id}.png?raw=true`} id={id}/>}</div>
+          })}
+        </div>
           {this.state.isLoading ? (
             <div
               style={{
@@ -76,13 +93,13 @@ export default class Home extends React.Component {
                 width: "auto",
                 display: "flex",
                 border: "solid",
-                borderColor: 'yellow'
+                borderColor: 'yellow',
               }}
+              onClick={e => console.log("Clicked")}
             >
               <CircularProgress size={100} />
             </div>
           ) : null}
-        </div>
       </div>
     );
   }

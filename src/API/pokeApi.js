@@ -12,4 +12,11 @@ function getPokemonById(id) {
     return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
 }
 
+// function getPokemonId(id) {
+//     let url = "https://pokeapi.co/api/v2/pokemon/8/"
+//     let url_array = url.split('/')
+//     let id = url_array[url_array.length - 2]
+//     console.log(id)
+// }
+
 export default { getPokemons, getPokemonSpecs, getPokemonById}
