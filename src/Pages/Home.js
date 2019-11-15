@@ -2,15 +2,14 @@ import React from "react";
 import api from "../API/pokeApi";
 import CardItem from "../components/CardItem";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { useHistory } from "react-router-dom";
 
 export default class Home extends React.Component {
   _loadPokemons() {
     this.setState({ isLoading: true });
       api.getPokemons().then(data => {
         this.setState(
-          { pokemons: data.results, isLoading: false },() => {
-            console.log(this.state.pokemons)
-          }
+          { pokemons: data.results, isLoading: false }
         );
       });
   }
@@ -24,9 +23,10 @@ export default class Home extends React.Component {
     // this.setState({ isLoading: true });
   }
 
-  // _toDetail(id) {
 
-  // }
+  _toDetail(id) {
+    this.props.history.push(`/Detail/${id}`);
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +38,6 @@ export default class Home extends React.Component {
   }
 
   render() {
-    {console.log(this.props)}
 
     const useStyles = {
       container: {
@@ -83,7 +82,7 @@ export default class Home extends React.Component {
               border: "solid",
               borderColor: 'purple',
               margin: 20
-            }} key={i}>{<CardItem pokemon={pokemon} img={`${urlImg}${id}.png?raw=true`} id={id}/>}</div>
+            }} key={i}>{<CardItem pokemon={pokemon} img={`${urlImg}${id}.png?raw=true`} id={id} toDetail={this._toDetail}/>}</div>
           })}
         </div>
           {this.state.isLoading ? (

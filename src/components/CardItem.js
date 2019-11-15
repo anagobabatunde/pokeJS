@@ -8,6 +8,9 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {Link} from "react-router-dom";
+import {
+  withRouter
+} from 'react-router-dom'
 
 const useStyles = makeStyles({
   card: {
@@ -15,11 +18,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CardItem(props) {
+function CardItem(props) {
   const classes = useStyles();
 
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} onClick={() => {props.history.push(`/Detail/${props.id}/${props.pokemon.name}`)}}>
       <CardActionArea>
         <CardMedia
           component="img"
@@ -49,3 +52,5 @@ export default function CardItem(props) {
     </Card>
   );
 }
+
+export default withRouter(CardItem)
