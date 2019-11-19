@@ -14,13 +14,16 @@ export default class Home extends React.Component {
     this.state = {
       pokemons: [],
       types: [],
+      moves: [],
       filteredPokemons: [],
       start: 1,
       end: 20,
       type: -1,
+      move: -1,
       isLoading: false
     };
     this.originalPokemonList = [];
+    this.commonPokemonList = [];
     this.handleTypeChange = this.handleTypeChange.bind(this);
   }
 
@@ -36,10 +39,13 @@ export default class Home extends React.Component {
         );
         this.originalPokemonList = this.state.pokemons;
       });
-      api.getTypes().then(data => {
-        this.setState(
-          { types: data.results, isLoading: false }
-        );
+      api.getSimple("type").then(data => {
+        this.setState({ types: data.results });
+      });
+      api.getSimple("move").then(data => {
+        this.setState({ moves: data.results });
+        console.log("moves are", data.results);
+        
       });
   }
   _loadSpecs(url) {
@@ -65,7 +71,7 @@ export default class Home extends React.Component {
       this.setState({ isLoading: true, pokemons: this.originalPokemonList });
     } else {
       this.setState({isLoading: true}); // TODO : FIXME
-      api.getPokemonByTypeId(event.target.value).then(data => {
+      api.getPokemonByXId("type", event.target.value).then(data => {
         this.setState({ isLoading: true }); // TODO : OR FIXME HERE
         this.forceUpdate();
         var arrangedData = data.pokemon.map(function (el) { return el.pokemon; });
@@ -73,6 +79,24 @@ export default class Home extends React.Component {
       });
     }
     setTimeout( function () { this.setState({ isLoading: false }); }.bind(this), 3000 ); // 
+  }
+
+  handleMoveChange(event) {
+    if (event.target.value == -1) {
+      console.log("-1");
+      this.setState({ isLoading: true, pokemons: this.originalPokemonList });
+    } else {
+     // this.setState({isLoading: true}); // TODO : FIXME
+      api.getPokemonByXId("move",event.target.value).then(data => {
+        // sthis.setState({ isLoading: true }); // TODO : OR FIXME HERE
+        console.log("cur data is ", data)
+        // this.forceUpdate();
+        // var arrangedData = data.pokemon.map(function (el) { return el.pokemon; });
+        //this.setState({ type: data.id, pokemons: arrangedData });
+      });
+    }
+    // setTimeout( function () { this.setState({ isLoading: false }); }.bind(this), 3000 );
+    console.log("yes move");
   }
 
   render() {
@@ -107,7 +131,22 @@ export default class Home extends React.Component {
         onChange={this.handleTypeChange}
       >
         <MenuItem value={-1}>No type</MenuItem>
-        {this.state.types.map((type, i) => { return <MenuItem value={i}>{this.firstLetterMaj(type.name) + " " + i}</MenuItem> })} 
+        {this.state.types.map((type, i) => { return <MenuItem value={i}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
+        {
+          // TODO: sur une ligne c'est ptet 1 peu trop?
+        } 
+      </Select>
+      </FormControl>
+      <FormControl>
+      <InputLabel id="demo-simple-select-label">Move</InputLabel>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        value={this.state.move}
+        onChange={this.handleMoveChange}
+      >
+        <MenuItem value={-1}>No move</MenuItem>
+        {this.state.moves.map((move, i) => { return <MenuItem value={i}>{this.firstLetterMaj(move.name) + " " + i}</MenuItem> })} 
         {
           // TODO: sur une ligne c'est ptet 1 peu trop?
         } 

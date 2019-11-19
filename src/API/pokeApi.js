@@ -18,15 +18,15 @@ function getPokemonById(id) {
 // }
 
 
-function getTypes() {
-    let url = 'https://pokeapi.co/api/v2/type/'
+function getSimple(path) {
+    let url = 'https://pokeapi.co/api/v2/' + path
     return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
 }
 
-function getPokemonByTypeId(id) {
-    let url = 'https://pokeapi.co/api/v2/type/' + id
+function getPokemonByXId(x ,id) {
+    let url = 'https://pokeapi.co/api/v2/' + x + '/' + id
     return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
 }
 
 
-export default { getPokemons, getPokemonSpecs, getPokemonByTypeId, getTypes}
+export default { getPokemons, getPokemonSpecs, getSimple, getPokemonByXId}
