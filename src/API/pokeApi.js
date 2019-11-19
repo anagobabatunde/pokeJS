@@ -17,4 +17,16 @@ function getPokemonById(id) {
 
 // }
 
-export default { getPokemons, getPokemonSpecs, getPokemonById}
+
+function getTypes() {
+    let url = 'https://pokeapi.co/api/v2/type/'
+    return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
+}
+
+function getPokemonByTypeId(id) {
+    let url = 'https://pokeapi.co/api/v2/type/' + id
+    return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
+}
+
+
+export default { getPokemons, getPokemonSpecs, getPokemonByTypeId, getTypes}
