@@ -17,8 +17,8 @@ export default class Home extends React.Component {
       filteredPokemons: [],
       start: 1,
       end: 20,
-      type: -1,
-      move: -1,
+      type: 0,
+      move: 0,
       isLoading: false
     };
     this.originalPokemonList = [];
@@ -61,14 +61,11 @@ export default class Home extends React.Component {
   }
 
   handleTypeChange(event) {
-    if (event.target.value == -1) {
-      console.log("-1");
-      this.setState({ isLoading: true, pokemons: this.originalPokemonList });
+    this.setState({isLoading: true});
+    if (event.target.value === -1) {
+      this.setState({ pokemons: this.originalPokemonList });
     } else {
-      this.setState({isLoading: true}); // TODO : FIXME
       api.getPokemonByXId("type", event.target.value).then(data => {
-        this.setState({ isLoading: true }); // TODO : OR FIXME HERE
-        this.forceUpdate();
         var arrangedData = data.pokemon.map(function(el) {
           return el.pokemon;
         });
@@ -79,25 +76,23 @@ export default class Home extends React.Component {
       function() {
         this.setState({ isLoading: false });
       }.bind(this),
-      3000
-    ); //
+      500
+    );
   }
 
   handleMoveChange(event) {
-    if (event.target.value == -1) {
+    this.setState({isLoading: true});
+    if (event.target.value === 0) {
       console.log("-1");
-      this.setState({ isLoading: true, pokemons: this.originalPokemonList });
+      this.setState({ pokemons: this.originalPokemonList });
     } else {
-     // this.setState({isLoading: true}); // TODO : FIXME
       api.getPokemonByXId("move",event.target.value).then(data => {
-        // sthis.setState({ isLoading: true }); // TODO : OR FIXME HERE
         console.log("cur data is ", data)
-        // this.forceUpdate();
         // var arrangedData = data.pokemon.map(function (el) { return el.pokemon; });
         //this.setState({ type: data.id, pokemons: arrangedData });
       });
     }
-    // setTimeout( function () { this.setState({ isLoading: false }); }.bind(this), 3000 );
+    setTimeout( function () { this.setState({ isLoading: false }); }.bind(this), 500 );
     console.log("yes move");
   }
 
@@ -126,6 +121,8 @@ export default class Home extends React.Component {
             height: "auto",
             width: "auto",
             display: "flex",
+            alignContent: "center",
+            justifyContent: "center",
             border: "solid",
             borderColor: "yellow"
           }}
@@ -146,8 +143,8 @@ export default class Home extends React.Component {
             value={this.state.type}
             onChange={this.handleTypeChange}
           >
-            <MenuItem value={-1}>No type</MenuItem>
-            {this.state.types.map((type, i) => { return <MenuItem value={i}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
+            <MenuItem value={0}>No type</MenuItem>
+            {this.state.types.map((type, i) => { return <MenuItem value={i + 1}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
             {
               // TODO: sur une ligne c'est ptet 1 peu trop?
             } 
@@ -168,11 +165,6 @@ export default class Home extends React.Component {
             } 
           </Select>
           </FormControl>
-          <input
-            type="text"
-            placeholder="Search by type"
-            onChange={this.filterByType}
-          />
           <div
             style={{
               display: "flex",
@@ -206,7 +198,7 @@ export default class Home extends React.Component {
                   {
                     <CardItem
                       pokemon={pokemon}
-                      img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
+                      // img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
                       id={id}
                       toDetail={this._toDetail}
                     />

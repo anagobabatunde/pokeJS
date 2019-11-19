@@ -22,12 +22,29 @@ class CardItem extends React.Component {
       // name: '',
     };
   }
+
+  findLanguageHelper(lang, arr) {
+    var matches = null;
+    arr.forEach(function(e) {
+      if (e.language.name === lang) {
+        matches = e.flavor_text
+      }
+    });
+    // console.log("MATCH IS", matches);
+    return matches;
+  }
+
   componentDidMount() {
     this.setState({ isLoading: true });
     api.getPokemonDesc(this.props.id).then(data => {
       // console.log(data.names[6].name) //pour du fr
-      // console.log(data)
-      this.setState({ desc: data.flavor_text_entries[1].flavor_text, /*name: data.names[6].name,*/  isLoading: false });
+      let text = null
+      if (data == null || data.flavor_text_entries == null || data.flavor_text_entries[1] == null) {
+        text = "No description available."
+        } else {
+        text = this.findLanguageHelper("en", data.flavor_text_entries)
+      }
+      this.setState({ desc: text, isLoading: false });
     });
   }
 

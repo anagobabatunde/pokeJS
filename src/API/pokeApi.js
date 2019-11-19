@@ -34,4 +34,4 @@ function getPokemonByXId(x ,id) {
 }
 
 
-export default { getPokemons, getPokemonSpecs, getSimple, getPokemonByXId, getPokemonDesc, getPokemonById, getPokemonByUrl}
+export default { getPokemons, getSimple, getPokemonByXId, getPokemonDesc, getPokemonById, getPokemonByUrl}
