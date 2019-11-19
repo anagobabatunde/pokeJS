@@ -1,56 +1,80 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import {Link} from "react-router-dom";
-import {
-  withRouter
-} from 'react-router-dom'
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import { Link } from "react-router-dom";
+import api from "../API/pokeApi";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
-const useStyles = makeStyles({
-  card: {
-    maxWidth: 300,
-  },
-});
+import { withRouter } from "react-router-dom";
 
-function CardItem(props) {
-  const classes = useStyles();
+class CardItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      desc: '',
+      isLoading: false,
+      // name: '',
+    };
+  }
+  componentDidMount() {
+    this.setState({ isLoading: true });
+    api.getPokemonDesc(this.props.id).then(data => {
+      // console.log(data.names[6].name) //pour du fr
+      // console.log(data)
+      this.setState({ desc: data.flavor_text_entries[1].flavor_text, /*name: data.names[6].name,*/  isLoading: false });
+    });
+  }
 
-  return (
-    <Card className={classes.card} onClick={() => {props.history.push(`/Detail/${props.id}/${props.pokemon.name}`)}}>
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          alt="Contemplative Reptile"
-          height="250"
-          image={props.img}
-          title="Contemplative Reptile"
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            {props.pokemon.name}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-            across all continents except Antarctica
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-      <CardActions>
-        <Button size="small" color="primary">
-          testtest
-        </Button>
-        <Button size="small" color="primary">
-          Learn More
-        </Button>
-      </CardActions>
-    </Card>
-  );
+  render() {
+    return (
+      <Card
+        style={{ maxWidth: 300 }}
+        onClick={() => {
+          this.props.history.push(
+            `/Detail/${this.props.id}/${this.props.pokemon.name}` );
+        }}
+      >
+        {this.state.isLoading ? (
+          <LinearProgress />
+        ) : (
+          <div>
+            {" "}
+            <CardActionArea>
+              <CardMedia
+                component="img"
+                alt="Contemplative Reptile"
+                height="250"
+                image={this.props.img}
+                title="Contemplative Reptile"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {this.props.pokemon.name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                   {this.state.desc}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions>
+            <Typography color="primary" variant="body2" component="p">
+                  Id : {this.props.id}
+                </Typography>
+                <Typography color="primary" variant="body2" component="p">
+                  Type: {this.props.pokemon.name}
+                </Typography>
+            </CardActions>
+          </div>
+        )}
+      </Card>
+    );
+  }
 }
 
-export default withRouter(CardItem)
+export default withRouter(CardItem);
