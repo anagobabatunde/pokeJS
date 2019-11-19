@@ -22,4 +22,15 @@ function getPokemonDesc(id) {
 
 // }
 
-export default { getPokemons, getPokemonByUrl, getPokemonById, getPokemonDesc}
+function getTypes() {
+    let url = 'https://pokeapi.co/api/v2/type/'
+    return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
+}
+
+function getPokemonByTypeId(id) {
+    let url = 'https://pokeapi.co/api/v2/type/' + id
+    return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
+}
+
+
+export default { getPokemons, getPokemonByUrl, getPokemonByTypeId, getTypes, getPokemonDesc, getPokemonById}
