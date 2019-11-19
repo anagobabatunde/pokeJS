@@ -5,6 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
+import InputBase from '@material-ui/core/InputBase';
 import Select from "@material-ui/core/Select";
 
 export default class Home extends React.Component {
@@ -23,7 +24,10 @@ export default class Home extends React.Component {
     };
     this.originalPokemonList = [];
     this.commonPokemonList = [];
-    this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleTypeChange = this.handleTypeChange.bind(this); // this for state or altro
+    this.handleMoveChange = this.handleMoveChange.bind(this);
+    this.handleSearchByName = this.handleSearchByName.bind(this);
+    this.searchValue = null;
   }
 
   firstLetterMaj(s) {
@@ -62,7 +66,7 @@ export default class Home extends React.Component {
 
   handleTypeChange(event) {
     this.setState({isLoading: true});
-    if (event.target.value === -1) {
+    if (event.target.value == 0) {
       this.setState({ pokemons: this.originalPokemonList });
     } else {
       api.getPokemonByXId("type", event.target.value).then(data => {
@@ -94,6 +98,27 @@ export default class Home extends React.Component {
     }
     setTimeout( function () { this.setState({ isLoading: false }); }.bind(this), 500 );
     console.log("yes move");
+  }
+
+  handleSearchByName(event) {
+    // TODO @andy : Maybe loader or not as it's live search
+    let val = event.target.value;
+    let matches = [];
+    if (val === "") {
+      console.info("search empty!");
+      this.setState({ pokemons: this.originalPokemonList });
+    } else {
+      this.state.pokemons.map((pokemon, i) => { 
+        if (pokemon.name.startsWith(event.target.value)) {
+          matches.push(pokemon)
+          this.setState({ pokemons: matches });
+        }
+      });
+      if (matches.length == 0) {
+        console.warn("No result!");
+        // TODO : nakbar
+      }
+    }
   }
 
   render() {
@@ -134,6 +159,13 @@ export default class Home extends React.Component {
     } else {
       return (
         <div style={useStyles.container}>
+          <InputBase
+              placeholder="Search…"
+              // classes={{ root: classes.inputRoot, input: classes.inputInput, }}
+              // value={this.searchValue}
+              onChange={this.handleSearchByName}
+              inputProps={{ 'aria-label': 'search' }}
+            />
             <FormControl // className={classes.formControl} // TODO: FIXME besoin de faire du css ou alors remove formcontrol
           >
           <InputLabel id="demo-simple-select-label">Type</InputLabel>
