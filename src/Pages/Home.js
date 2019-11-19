@@ -128,7 +128,7 @@ export default class Home extends React.Component {
           }}
         >
           {this.state.pokemons.map((pokemon, i) => {
-                let urlImg = "https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other-sprites/official-artwork/";
+                let urlImg = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" // other-sprites/official-artwork/"; TODO: potential fix?
                 let url_array = pokemon.url.split('/')
                 let id = url_array[url_array.length - 2]
             return <div               style={{
