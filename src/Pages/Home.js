@@ -1,6 +1,7 @@
 import React from "react";
 import api from "../API/pokeApi";
 import CardItem from "../components/CardItem";
+import Pagify from '../components/pager';
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -12,10 +13,42 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Button from '@material-ui/core/Button';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import Tooltip from '@material-ui/core/Tooltip';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import DeleteIcon from '@material-ui/icons/Delete';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import { Icon } from '@material-ui/core';
+import PropTypes from 'prop-types';
+
+const propTypes = {
+  items: PropTypes.array.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  initialPage: PropTypes.number,
+  pageSize: PropTypes.number
+}
+
+const defaultProps = {
+  initialPage: 1,
+  pageSize: 10
+}
 
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
+    var exampleItems = [...Array(150).keys()].map(i => ({ id: (i+1), name: 'Item ' + (i+1) }));
+
     this.state = {
       pokemons: [],
       types: [],
@@ -29,7 +62,9 @@ export default class Home extends React.Component {
       isLoading: false,
       snackOpen: false,
       snackMsg: "",
+      pageOfItems: []
     };
+
     this.originalPokemonList = [];
     this.commonPokemonList = [];
     this.handleTypeChange = this.handleTypeChange.bind(this);
@@ -37,6 +72,7 @@ export default class Home extends React.Component {
     this.handleSearchByName = this.handleSearchByName.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.searchValue = null;
+    this.onChangePage = this.onChangePage.bind(this);
   }
 
   firstLetterMaj(s) {
@@ -45,17 +81,24 @@ export default class Home extends React.Component {
 
   _loadPokemons() {
     this.setState({ isLoading: true });
+    /*
       api.getPokemons().then(data => {
-        this.setState({ pokemons: data.results, isLoading: false });
+        this.setState({ pokemons: data.results, exampleItems: data.results, isLoading: false });
         this.originalPokemonList = this.state.pokemons;
+        console.log("loaded this much:", this.state.pokemons.length);
       });
+      */
       api.getSimple("type").then(data => {
         this.setState({ types: data.results });
       });
       api.getSimple("move").then(data => {
         this.setState({ moves: data.results });
         console.log("moves are", data.results);
-        
+      }); 
+      api.getAllPokemons().then(data => {
+        this.originalPokemonList = this.state.pokemons;
+        this.setState({ pokemons: data.results, isLoading: false });
+        console.log("got",data.results);
       });
   }
   _loadSpecs(id) {
@@ -137,9 +180,13 @@ export default class Home extends React.Component {
     this.setState({snackOpen: false});
   };
 
+  onChangePage(pageOfItems) {
+      this.setState({ pageOfItems: pageOfItems });
+  }
+
   render() {
-    console.log("taille", window.innerWidth)
-    console.log("taille", window.innerHeight)
+    console.log("taille W:" + window.innerWidth + "taille H:" + window.innerHeight);
+
     const useStyles = {
       container: {
         display: "flex",
@@ -180,6 +227,7 @@ export default class Home extends React.Component {
     } else {
       return (
         <div style={useStyles.container}>
+          <Pagify items={this.state.pokemons} onChangePage={this.onChangePage} />
           <Snackbar
             anchorOrigin={{
               vertical: 'bottom',
@@ -237,9 +285,6 @@ export default class Home extends React.Component {
           >
             <MenuItem value={-1}>No move</MenuItem>
             {this.state.moves.map((move, i) => { return <MenuItem value={i}>{this.firstLetterMaj(move.name) + " " + i}</MenuItem> })} 
-            {
-              // TODO: sur une ligne c'est ptet 1 peu trop?
-            } 
           </Select>
           </FormControl>
           <div
@@ -255,10 +300,9 @@ export default class Home extends React.Component {
               overflow: "scroll"
             }}
           >
-            {this.state.pokemons.map((pokemon, i) => {
-              let urlImg =
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"; // other-sprites/official-artwork/"; TODO: potential fix?
-              let url_array = pokemon.url.split("/");
+            {this.state.pageOfItems.map((item, i) => {
+              let urlImg = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"; // other-sprites/official-artwork/"; TODO: potential fix? https://stackoverflow.com/a/18837813
+              let url_array = item.url.split("/");
               let id = url_array[url_array.length - 2];
               return (
                 <div
@@ -274,8 +318,8 @@ export default class Home extends React.Component {
                 >
                   {
                     <CardItem
-                      pokemon={pokemon}
-                      img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
+                      pokemon={item}
+                      // img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
                       id={id}
                       toDetail={this._toDetail}
                     />
