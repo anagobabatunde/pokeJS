@@ -49,10 +49,22 @@ export default class Home extends React.Component {
         
       });
   }
-  _loadSpecs(id) {
-    api.getPokemonById(id).then(data => {
-      return data;
-    });
+  
+    TypeChange = (id_type) => {
+    this.setState({isLoading: true});
+    api.getPokemonByXId("type", id_type).then(data => {
+        var arrangedData = data.pokemon.map(function(el) {
+          return el.pokemon;
+        });
+        this.setState({ type: data.id, pokemons: arrangedData });
+      });
+  
+    setTimeout(
+      function() {
+        this.setState({ isLoading: false });
+      }.bind(this),
+      500
+    );
   }
 
   componentDidMount() {
@@ -122,8 +134,6 @@ export default class Home extends React.Component {
   }
 
   render() {
-    console.log("taille", window.innerWidth)
-    console.log("taille", window.innerHeight)
     const useStyles = {
       container: {
         display: "flex",
@@ -217,7 +227,7 @@ export default class Home extends React.Component {
           >
             {this.state.pokemons.map((pokemon, i) => {
               let urlImg =
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"; // other-sprites/official-artwork/"; TODO: potential fix?
+                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other-sprites/official-artwork/"; //TODO: potential fix?
               let url_array = pokemon.url.split("/");
               let id = url_array[url_array.length - 2];
               return (
@@ -238,6 +248,7 @@ export default class Home extends React.Component {
                       img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
                       id={id}
                       toDetail={this._toDetail}
+                      changeType={this.TypeChange}
                     />
                   }
                 </div>

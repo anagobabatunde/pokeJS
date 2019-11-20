@@ -3,7 +3,7 @@ import CardSwiper from "../components/CardSwiper";
 import { withRouter } from "react-router-dom";
 import api from "../API/pokeApi";
 import LinearProgress from "@material-ui/core/LinearProgress";
-
+import TypeCard from "../components/TypeCard";
 
 const styles = {
     container: {
@@ -12,6 +12,26 @@ const styles = {
         width: '100%',
         height: '100%',
         borderColor: 'red'
+    },
+    spriteContainer: {
+        width: '100%',
+        height: '100%',
+        border: 'solid',
+        borderColor: 'yellow'
+    },
+    TypeCardContainer: {
+        width: '100%',
+        height: '100%',
+        border: 'solid',
+        borderColor: 'green',
+    },
+    TypeContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        border: 'solid 6px',
+        borderColor: 'blue',
     }
 }
 class Detail extends React.Component {
@@ -20,6 +40,8 @@ class Detail extends React.Component {
         this.state = {
             sprites: {},
             isLoading: false,
+            moves: [],
+            types: []
         }
     }
     componentDidMount() {
@@ -29,14 +51,25 @@ class Detail extends React.Component {
     _loadSpecs(id) {
         api.getPokemonById(id).then(data => {
             // console.log(data)
-            this.setState({sprites: data.sprites, isLoading: false});
+            this.setState({sprites: data.sprites, types: data.types, moves: data.moves, isLoading: false}, () => {console.log("je suis la",this.state)});
         });
       }
     render() {
+        console.log("change type",this.props)
         if (!this.state.isLoading) {
             return (
                 <div style={styles.container}>
-                    <CardSwiper sprites={this.state.sprites}/>
+                    <div style={styles.spriteContainer}>
+                        <CardSwiper sprites={this.state.sprites}/>
+                    </div>
+                    <div style={styles.TypeContainer}>
+                        <div style={styles.TypeCardContainer}>
+                            <TypeCard title={"Type of Pokemon"} types={this.state.types}/>
+                        </div>
+                        <div style={styles.TypeCardContainer}>
+                            <TypeCard title={"Moves"} moves={this.state.moves}/>
+                        </div>
+                    </div>
                 </div>
             )
         } else {
@@ -50,4 +83,4 @@ class Detail extends React.Component {
     }
 }
 
-export default Detail
+export default withRouter(Detail)

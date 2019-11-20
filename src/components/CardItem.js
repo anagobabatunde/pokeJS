@@ -46,15 +46,17 @@ class CardItem extends React.Component {
       }
       this.setState({ desc: text, isLoading: false });
     });
+   
   }
 
   render() {
+    console.log("card item props", this.props)
     return (
       <Card
         style={{ maxWidth: 300 }}
         onClick={() => {
           this.props.history.push(
-            `/Detail/${this.props.id}/${this.props.pokemon.name}` );
+            `/Detail/${this.props.id}/${this.props.pokemon.name}`);
         }}
       >
         {this.state.isLoading ? (

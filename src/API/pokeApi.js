@@ -1,5 +1,5 @@
 function getPokemons() {
-    let url = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=26' //get 20 poke
+    let url = 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20' //get 20 poke
     return fetch(url).then((response) => response.json()).catch((error) => console.log(error))
 }
 
