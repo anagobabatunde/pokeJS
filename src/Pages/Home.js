@@ -7,6 +7,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputBase from '@material-ui/core/InputBase';
 import Select from "@material-ui/core/Select";
+import TextField from '@material-ui/core/TextField';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Button from '@material-ui/core/Button';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -20,13 +25,17 @@ export default class Home extends React.Component {
       end: 20,
       type: 0,
       move: 0,
-      isLoading: false
+      searchComplete: [],
+      isLoading: false,
+      snackOpen: false,
+      snackMsg: "",
     };
     this.originalPokemonList = [];
     this.commonPokemonList = [];
     this.handleTypeChange = this.handleTypeChange.bind(this); // this for state or altro
     this.handleMoveChange = this.handleMoveChange.bind(this);
     this.handleSearchByName = this.handleSearchByName.bind(this);
+    this.handleClose = this.handleClose.bind(this);
     this.searchValue = null;
   }
 
@@ -104,22 +113,36 @@ export default class Home extends React.Component {
     // TODO @andy : Maybe loader or not as it's live search
     let val = event.target.value;
     let matches = [];
+    let matchesName = [];
     if (val === "") {
       console.info("search empty!");
       this.setState({ pokemons: this.originalPokemonList });
     } else {
       this.state.pokemons.map((pokemon, i) => { 
-        if (pokemon.name.startsWith(event.target.value)) {
+        if (pokemon.name.startsWith(val)) {
           matches.push(pokemon)
-          this.setState({ pokemons: matches });
+          matchesName.push(pokemon.name);
+          console.log("inside");
+          
+          console.log("matches by name", matchesName);
+          
+          this.setState({ pokemons: matches, searchComplete: matchesName });
         }
       });
       if (matches.length == 0) {
+        this.setState({searchComplete: [ "No matches!" ], snackOpen: true, snackMsg: "No matches for search!"})
         console.warn("No result!");
         // TODO : nakbar
       }
     }
   }
+
+  handleClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({snackOpen: false});
+  };
 
   render() {
     const useStyles = {
@@ -159,6 +182,30 @@ export default class Home extends React.Component {
     } else {
       return (
         <div style={useStyles.container}>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            open={this.state.snackOpen}
+            autoHideDuration={1000}
+            onClose={this.handleClose}
+            ContentProps={{
+              'aria-describedby': 'message-id',
+            }}
+            message={<span id="message-id">{this.state.snackMsg}</span>}
+            action={[
+              <IconButton
+                key="close"
+                aria-label="close"
+                color="inherit"
+                // className={classes.close}
+                onClick={this.handleClose}
+              >
+                <CloseIcon />
+              </IconButton>,
+            ]}
+          />
           <InputBase
               placeholder="Search…"
               // classes={{ root: classes.inputRoot, input: classes.inputInput, }}
