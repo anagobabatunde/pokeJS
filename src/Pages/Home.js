@@ -81,7 +81,7 @@ export default class Home extends React.Component {
 
   _loadPokemons() {
     this.setState({ isLoading: true });
-    /*
+    /* // TODO @andy delete this as we dont have the use
       api.getPokemons().then(data => {
         this.setState({ pokemons: data.results, exampleItems: data.results, isLoading: false });
         this.originalPokemonList = this.state.pokemons;
@@ -96,9 +96,8 @@ export default class Home extends React.Component {
         console.log("moves are", data.results);
       }); 
       api.getAllPokemons().then(data => {
-        this.originalPokemonList = this.state.pokemons;
+        this.originalPokemonList = data.results;
         this.setState({ pokemons: data.results, isLoading: false });
-        console.log("got",data.results);
       });
   }
   _loadSpecs(id) {
@@ -166,6 +165,8 @@ export default class Home extends React.Component {
           matchesName.push(pokemon.name);
         }
       });
+      console.log("matches are ",matches);
+      
       if (matches.length == 0)
         this.setState({snackOpen: true, snackMsg: "No matches for search!"})
       else
