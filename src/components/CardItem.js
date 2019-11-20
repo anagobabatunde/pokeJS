@@ -50,21 +50,20 @@ class CardItem extends React.Component {
   }
 
   render() {
-    console.log("card item props", this.props)
     return (
       <Card
         style={{ maxWidth: 300 }}
-        onClick={() => {
-          this.props.history.push(
-            `/Detail/${this.props.id}/${this.props.pokemon.name}`);
-        }}
       >
         {this.state.isLoading ? (
           <LinearProgress />
         ) : (
           <div>
             {" "}
-            <CardActionArea>
+            <CardActionArea
+              onClick={() => {
+                this.props.history.push(
+                  `/Detail/${this.props.id}/${this.props.pokemon.name}`, this.state.desc);
+              }}>
               <CardMedia
                 component="img"
                 alt="Contemplative Reptile"

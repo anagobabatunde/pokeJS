@@ -243,7 +243,7 @@ export default class Home extends React.Component {
             onChange={this.handleTypeChange}
           >
             <MenuItem value={0}>No type</MenuItem>
-            {this.state.types.map((type, i) => { return <MenuItem value={i + 1}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
+            {this.state.types.map((type, i) => { return <MenuItem value={i + 1} key={i}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
           </Select>
           </FormControl>
           <FormControl>
@@ -255,7 +255,7 @@ export default class Home extends React.Component {
             onChange={this.handleMoveChange}
           >
             <MenuItem value={-1}>No move</MenuItem>
-            {this.state.moves.map((move, i) => { return <MenuItem value={i}>{this.firstLetterMaj(move.name) + " " + i}</MenuItem> })} 
+            {this.state.moves.map((move, i) => { return <MenuItem value={i} key={i}>{this.firstLetterMaj(move.name) + " " + i}</MenuItem> })} 
           </Select>
           </FormControl>
           <div

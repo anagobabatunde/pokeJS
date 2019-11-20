@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import api from "../API/pokeApi";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import TypeCard from "../components/TypeCard";
-
+import DescCard from "../components/DescCard";
 const styles = {
     container: {
         border: 'solid',
@@ -41,17 +41,22 @@ class Detail extends React.Component {
             sprites: {},
             isLoading: false,
             moves: [],
-            types: []
+            types: [],
+            name: '',
+            id: null,
+            desc: '',
         }
     }
     componentDidMount() {
         this.setState({isLoading: true})
         this._loadSpecs(this.props.match.params.id)
     }
+    
+
     _loadSpecs(id) {
         api.getPokemonById(id).then(data => {
             // console.log(data)
-            this.setState({sprites: data.sprites, types: data.types, moves: data.moves, isLoading: false}, () => {console.log("je suis la",this.state)});
+            this.setState({sprites: data.sprites, types: data.types, moves: data.moves,name: data.name,id: data.id, isLoading: false}, () => {console.log("je suis la",this.state)});
         });
       }
     render() {
@@ -62,14 +67,7 @@ class Detail extends React.Component {
                     <div style={styles.spriteContainer}>
                         <CardSwiper sprites={this.state.sprites}/>
                     </div>
-                    <div style={styles.TypeContainer}>
-                        <div style={styles.TypeCardContainer}>
-                            <TypeCard title={"Type of Pokemon"} types={this.state.types}/>
-                        </div>
-                        <div style={styles.TypeCardContainer}>
-                            <TypeCard title={"Moves"} moves={this.state.moves}/>
-                        </div>
-                    </div>
+                    <DescCard types={this.state.types} moves={this.state.moves} name={this.state.name} id={this.state.id} desc={this.props.location.state}/>
                 </div>
             )
         } else {

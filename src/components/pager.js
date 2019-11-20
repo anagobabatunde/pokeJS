@@ -113,7 +113,7 @@ class Pagify extends React.Component {
                         value={this.state.requestedIPP}
                         onChange={this.handleIPPChange}
                     >
-                        {this.props.ipp.map((item, i) => { return <MenuItem value={i}>{item}</MenuItem> })} 
+                        {this.props.ipp.map((item, i) => { return <MenuItem value={i} key={i}>{item}</MenuItem> })} 
                     </Select>
                 </FormControl>
                 <ul className="pagination">
