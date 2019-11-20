@@ -32,7 +32,7 @@ export default class Home extends React.Component {
     };
     this.originalPokemonList = [];
     this.commonPokemonList = [];
-    this.handleTypeChange = this.handleTypeChange.bind(this); // this for state or altro
+    this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleMoveChange = this.handleMoveChange.bind(this);
     this.handleSearchByName = this.handleSearchByName.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -101,6 +101,7 @@ export default class Home extends React.Component {
     } else {
       api.getPokemonByXId("move",event.target.value).then(data => {
         console.log("cur data is ", data)
+        // TODO : broken, need algo and investigation @andy
         // var arrangedData = data.pokemon.map(function (el) { return el.pokemon; });
         //this.setState({ type: data.id, pokemons: arrangedData });
       });
@@ -110,30 +111,22 @@ export default class Home extends React.Component {
   }
 
   handleSearchByName(event) {
-    // TODO @andy : Maybe loader or not as it's live search
     let val = event.target.value;
     let matches = [];
     let matchesName = [];
-    if (val === "") {
-      console.info("search empty!");
-      this.setState({ pokemons: this.originalPokemonList });
-    } else {
+    if (val === "")
+      this.setState({ pokemons: this.originalPokemonList});
+    else {
       this.state.pokemons.map((pokemon, i) => { 
         if (pokemon.name.startsWith(val)) {
           matches.push(pokemon)
           matchesName.push(pokemon.name);
-          console.log("inside");
-          
-          console.log("matches by name", matchesName);
-          
-          this.setState({ pokemons: matches, searchComplete: matchesName });
         }
       });
-      if (matches.length == 0) {
-        this.setState({searchComplete: [ "No matches!" ], snackOpen: true, snackMsg: "No matches for search!"})
-        console.warn("No result!");
-        // TODO : nakbar
-      }
+      if (matches.length == 0)
+        this.setState({snackOpen: true, snackMsg: "No matches for search!"})
+      else
+        this.setState({ pokemons: matches, searchComplete: matchesName });
     }
   }
 
@@ -188,7 +181,7 @@ export default class Home extends React.Component {
               horizontal: 'center',
             }}
             open={this.state.snackOpen}
-            autoHideDuration={1000}
+            autoHideDuration={1800}
             onClose={this.handleClose}
             ContentProps={{
               'aria-describedby': 'message-id',
