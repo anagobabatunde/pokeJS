@@ -8,47 +8,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputBase from '@material-ui/core/InputBase';
 import Select from "@material-ui/core/Select";
-import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Button from '@material-ui/core/Button';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import { Icon } from '@material-ui/core';
-import PropTypes from 'prop-types';
-
-const propTypes = {
-  items: PropTypes.array.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  initialPage: PropTypes.number,
-  pageSize: PropTypes.number
-}
-
-const defaultProps = {
-  initialPage: 1,
-  pageSize: 10
-}
 
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    var exampleItems = [...Array(150).keys()].map(i => ({ id: (i+1), name: 'Item ' + (i+1) }));
-
     this.state = {
       pokemons: [],
       types: [],
@@ -165,8 +131,6 @@ export default class Home extends React.Component {
           matchesName.push(pokemon.name);
         }
       });
-      console.log("matches are ",matches);
-      
       if (matches.length == 0)
         this.setState({snackOpen: true, snackMsg: "No matches for search!"})
       else
@@ -175,9 +139,8 @@ export default class Home extends React.Component {
   }
 
   handleClose(event, reason) {
-    if (reason === 'clickaway') {
+    if (reason === 'clickaway')
       return;
-    }
     this.setState({snackOpen: false});
   };
 
@@ -271,9 +234,6 @@ export default class Home extends React.Component {
           >
             <MenuItem value={0}>No type</MenuItem>
             {this.state.types.map((type, i) => { return <MenuItem value={i + 1}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
-            {
-              // TODO: sur une ligne c'est ptet 1 peu trop?
-            } 
           </Select>
           </FormControl>
           <FormControl>

@@ -1,5 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from '@material-ui/core/InputBase';
+import Select from "@material-ui/core/Select";
 
 const propTypes = {
     items: PropTypes.array.isRequired,
@@ -10,13 +14,18 @@ const propTypes = {
 
 const defaultProps = {
     initialPage: 1,
-    pageSize: 10
+    ipp: [10, 20, 30, 40, 50],
+    pageSize: 50
 }
 
 class Pagify extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { pager: {} };
+        this.state = { 
+            pager: {},
+            requestedIPP: 0,
+        };
+        this.handleIPPChange = this.handleIPPChange.bind(this);
     }
 
     componentWillMount() {
@@ -30,22 +39,16 @@ class Pagify extends React.Component {
     }
 
     setPage(page) {
-        var { items, pageSize } = this.props;
+        var { items, ipp } = this.props;
+        var pageSize = ipp[this.state.requestedIPP]
         var pager = this.state.pager;
 
         if (page < 1 || page > pager.totalPages)
             return;
-
-        // get new pager object for specified page
         pager = this.getPager(items.length, page, pageSize);
-
-        // get new page of items from items array
         var pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
 
-        // update state
         this.setState({ pager: pager });
-
-        // call change page function in parent component
         this.props.onChangePage(pageOfItems);
     }
 
@@ -88,6 +91,12 @@ class Pagify extends React.Component {
         };
     }
 
+
+    handleIPPChange(event) {
+        this.setState({ requestedIPP: event.target.value}, () => this.setPage(this.props.initialPage))
+    }
+
+
     render() {
         var pager = this.state.pager;
 
@@ -95,25 +104,38 @@ class Pagify extends React.Component {
             return null;
 
         return (
-            <ul className="pagination">
-                <li className={pager.currentPage === 1 ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(1)}>First</a>
-                </li>
-                <li className={pager.currentPage === 1 ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(pager.currentPage - 1)}>Prev</a>
-                </li>
-                {pager.pages.map((page, index) =>
-                    <li key={index} className={pager.currentPage === page ? 'active' : ''}>
-                        <a onClick={() => this.setPage(page)}>{page}</a>
+            <div>
+                <FormControl>
+                    <InputLabel id="ipp-select-label">Items per page</InputLabel>
+                    <Select
+                        labelId="ipp-select"
+                        id="ipp-select"
+                        value={this.state.requestedIPP}
+                        onChange={this.handleIPPChange}
+                    >
+                        {this.props.ipp.map((item, i) => { return <MenuItem value={i}>{item}</MenuItem> })} 
+                    </Select>
+                </FormControl>
+                <ul className="pagination">
+                    <li className={pager.currentPage === 1 ? 'disabled' : ''}>
+                        <a onClick={() => this.setPage(1)}>First</a>
                     </li>
-                )}
-                <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(pager.currentPage + 1)}>Next</a>
-                </li>
-                <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(pager.totalPages)}>Last</a>
-                </li>
-            </ul>
+                    <li className={pager.currentPage === 1 ? 'disabled' : ''}>
+                        <a onClick={() => this.setPage(pager.currentPage - 1)}>Prev</a>
+                    </li>
+                    {pager.pages.map((page, index) =>
+                        <li key={index} className={pager.currentPage === page ? 'active' : ''}>
+                            <a onClick={() => this.setPage(page)}>{page}</a>
+                        </li>
+                    )}
+                    <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
+                        <a onClick={() => this.setPage(pager.currentPage + 1)}>Next</a>
+                    </li>
+                    <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
+                        <a onClick={() => this.setPage(pager.totalPages)}>Last</a>
+                    </li>
+                </ul>
+            </div>
         );
     }
 }
