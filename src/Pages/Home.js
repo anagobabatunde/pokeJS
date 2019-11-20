@@ -122,6 +122,8 @@ export default class Home extends React.Component {
   }
 
   render() {
+    console.log("taille", window.innerWidth)
+    console.log("taille", window.innerHeight)
     const useStyles = {
       container: {
         display: "flex",
@@ -149,7 +151,10 @@ export default class Home extends React.Component {
             alignContent: "center",
             justifyContent: "center",
             border: "solid",
-            borderColor: "yellow"
+            borderColor: "yellow",
+            position: 'absolute',
+            left: window.innerWidth / 2.19,
+            bottom: window.innerHeight / 2
           }}
           onClick={e => console.log("Clicked")}
         >
@@ -230,7 +235,7 @@ export default class Home extends React.Component {
                   {
                     <CardItem
                       pokemon={pokemon}
-                      // img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
+                      img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
                       id={id}
                       toDetail={this._toDetail}
                     />
