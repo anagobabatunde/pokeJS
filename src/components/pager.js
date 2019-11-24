@@ -1,4 +1,5 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
@@ -17,6 +18,29 @@ const defaultProps = {
     ipp: [10, 20, 30, 40, 50],
     pageSize: 50
 }
+
+const styles = {
+    root: {
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+    },
+    FormControl: {
+       width: 60,
+       height: 30,
+       marginTop: 0,
+    },
+    listContainer: {
+        display: "flex",
+        height: "10%",
+        alignItems: "center",
+        flexWrap: "wrap",
+    },
+    noBullet: {
+        listStyleType: "none",
+        padding: "2px",
+    },
+  };
 
 class Pagify extends React.Component {
     constructor(props) {
@@ -104,9 +128,8 @@ class Pagify extends React.Component {
             return null;
 
         return (
-            <div>
-                <FormControl>
-                    <InputLabel id="ipp-select-label">Items per page</InputLabel>
+            <div style={styles.root}>
+                <FormControl variant="outlined" style={styles.FormControl}>
                     <Select
                         labelId="ipp-select"
                         id="ipp-select"
@@ -116,22 +139,22 @@ class Pagify extends React.Component {
                         {this.props.ipp.map((item, i) => { return <MenuItem value={i} key={i}>{item}</MenuItem> })} 
                     </Select>
                 </FormControl>
-                <ul className="pagination">
-                    <li className={pager.currentPage === 1 ? 'disabled' : ''}>
+                <ul className="pagination" style={styles.listContainer}>
+                    <li className={pager.currentPage === 1 ? 'disabled' : ''} style={styles.noBullet}>
                         <a onClick={() => this.setPage(1)}>First</a>
                     </li>
-                    <li className={pager.currentPage === 1 ? 'disabled' : ''}>
+                    <li className={pager.currentPage === 1 ? 'disabled' : ''} style={styles.noBullet}>
                         <a onClick={() => this.setPage(pager.currentPage - 1)}>Prev</a>
                     </li>
                     {pager.pages.map((page, index) =>
-                        <li key={index} className={pager.currentPage === page ? 'active' : ''}>
+                        <li key={index} className={pager.currentPage === page ? 'active' : ''} style={styles.noBullet}>
                             <a onClick={() => this.setPage(page)}>{page}</a>
                         </li>
                     )}
-                    <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
+                    <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''} style={styles.noBullet}>
                         <a onClick={() => this.setPage(pager.currentPage + 1)}>Next</a>
                     </li>
-                    <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
+                    <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''} style={styles.noBullet}>
                         <a onClick={() => this.setPage(pager.totalPages)}>Last</a>
                     </li>
                 </ul>
@@ -140,6 +163,7 @@ class Pagify extends React.Component {
     }
 }
 
-Pagify.propTypes = propTypes;
+Pagify.propTypes = { classes: PropTypes.object.isRequired, propTypes};
 Pagify.defaultProps = defaultProps;
-export default Pagify;
+
+export default withStyles(styles)(Pagify);

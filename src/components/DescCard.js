@@ -30,18 +30,24 @@ const styles = {
     TypeCardContainer: {
         width: '100%',
         height: '100%',
-        border: 'solid',
-        borderColor: 'green',
+        borderRadius: 4,
+        borderWidth: 0.5,
+        borderColor: '#d6d7da',
     },
     TypeContainer: {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
         height: '100%',
-        border: 'solid 6px',
-        borderColor: 'blue',
+        borderRadius: 4,
+        boxShadow: '0 3px 15px 2px rgba(103,58,183,.4)',
     }
 }
+
+function firstLetterMaj(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export default function DescCard(props) {
   const classes = useStyles();
 
@@ -51,7 +57,7 @@ export default function DescCard(props) {
         <Grid container alignItems="center">
           <Grid item xs>
             <Typography gutterBottom variant="h4">
-              {props.name}
+              {firstLetterMaj(props.name)}
             </Typography>
           </Grid>
           <Grid item>

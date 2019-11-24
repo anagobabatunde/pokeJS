@@ -37,8 +37,8 @@ export default class Home extends React.Component {
     this.handleMoveChange = this.handleMoveChange.bind(this);
     this.handleSearchByName = this.handleSearchByName.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.searchValue = null;
     this.onChangePage = this.onChangePage.bind(this);
+    this.colors = ['rgba(103,58,183,.4)', 'rgba(230,81,0,.4)', 'rgba(0,145,234,.4)', 'rgba(0,121,107,.4)'];
   }
 
   firstLetterMaj(s) {
@@ -47,13 +47,6 @@ export default class Home extends React.Component {
 
   _loadPokemons() {
     this.setState({ isLoading: true });
-    /* // TODO @andy delete this as we dont have the use
-      api.getPokemons().then(data => {
-        this.setState({ pokemons: data.results, exampleItems: data.results, isLoading: false });
-        this.originalPokemonList = this.state.pokemons;
-        console.log("loaded this much:", this.state.pokemons.length);
-      });
-      */
       api.getSimple("type").then(data => {
         this.setState({ types: data.results });
       });
@@ -86,7 +79,6 @@ export default class Home extends React.Component {
 
   componentDidMount() {
     this._loadPokemons();
-    // this.setState({ isLoading: true });@
   }
 
   _toDetail(id) {
@@ -116,18 +108,14 @@ export default class Home extends React.Component {
   handleMoveChange(event) {
     this.setState({isLoading: true});
     if (event.target.value === 0) {
-      console.log("-1");
       this.setState({ pokemons: this.originalPokemonList });
     } else {
       api.getPokemonByXId("move",event.target.value).then(data => {
-        console.log("cur data is ", data)
-        // TODO : broken, need algo and investigation @andy
-        // var arrangedData = data.pokemon.map(function (el) { return el.pokemon; });
+        //var arrangedData = data.pokemon.map(function (el) { return el.pokemon; });
         //this.setState({ type: data.id, pokemons: arrangedData });
       });
     }
     setTimeout( function () { this.setState({ isLoading: false }); }.bind(this), 500 );
-    console.log("yes move");
   }
 
   handleSearchByName(event) {
@@ -168,7 +156,6 @@ export default class Home extends React.Component {
         overflow: "scroll",
         justifyContent: "center",
         alignItems: "center",
-        border: "solid"
       },
       gridList: {
         width: 300,
@@ -187,8 +174,6 @@ export default class Home extends React.Component {
             display: "flex",
             alignContent: "center",
             justifyContent: "center",
-            border: "solid",
-            borderColor: "yellow",
             position: 'absolute',
             left: window.innerWidth / 2.19,
             bottom: window.innerHeight / 2
@@ -201,7 +186,6 @@ export default class Home extends React.Component {
     } else {
       return (
         <div style={useStyles.container}>
-          <Pagify items={this.state.pokemons} onChangePage={this.onChangePage} />
           <Snackbar
             anchorOrigin={{
               vertical: 'bottom',
@@ -219,7 +203,6 @@ export default class Home extends React.Component {
                 key="close"
                 aria-label="close"
                 color="inherit"
-                // className={classes.close}
                 onClick={this.handleClose}
               >
                 <CloseIcon />
@@ -229,11 +212,10 @@ export default class Home extends React.Component {
           <InputBase
               placeholder="Search…"
               // classes={{ root: classes.inputRoot, input: classes.inputInput, }}
-              // value={this.searchValue}
               onChange={this.handleSearchByName}
               inputProps={{ 'aria-label': 'search' }}
             />
-            <FormControl // className={classes.formControl} // TODO: FIXME besoin de faire du css ou alors remove formcontrol
+            <FormControl // className={classes.formControl}
           >
           <InputLabel id="demo-simple-select-label">Type</InputLabel>
           <Select
@@ -246,6 +228,7 @@ export default class Home extends React.Component {
             {this.state.types.map((type, i) => { return <MenuItem value={i + 1} key={i}>{this.firstLetterMaj(type.name)}</MenuItem> })} 
           </Select>
           </FormControl>
+          {/* OFF: cf rocket.
           <FormControl>
           <InputLabel id="demo-simple-select-label">Move</InputLabel>
           <Select
@@ -255,26 +238,25 @@ export default class Home extends React.Component {
             onChange={this.handleMoveChange}
           >
             <MenuItem value={-1}>No move</MenuItem>
-            {this.state.moves.map((move, i) => { return <MenuItem value={i} key={i}>{this.firstLetterMaj(move.name) + " " + i}</MenuItem> })} 
+            {this.state.moves.map((move, i) => { return <MenuItem value={i} key={i}>{this.firstLetterMaj(move.name)}</MenuItem> })} 
           </Select>
           </FormControl>
+          */}
           <div
             style={{
               display: "flex",
-              border: "solid",
-              borderColor: "red",
               width: "100%",
               height: "100%",
               justifyContent: "space-Between",
               alignItems: "center",
               flexWrap: "wrap",
-              overflow: "scroll"
+              overflow: "scroll",
             }}
           >
 
 
             {this.state.pageOfItems.map((item, i) => {
-              let urlImg = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other-sprites/official-artwork/"//; TODO: potential fix? https://stackoverflow.com/a/18837813
+              let urlImg = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other-sprites/official-artwork/"
               let url_array = item.url.split("/");
               let id = url_array[url_array.length - 2];
               return (
@@ -283,16 +265,18 @@ export default class Home extends React.Component {
                     height: "auto",
                     width: "auto",
                     display: "flex",
-                    border: "solid",
-                    borderColor: "purple",
-                    margin: 20
+                    borderRadius: 4,
+                    borderWidth: 0.5,
+                    borderColor: '#d6d7da',
+                    margin: 20,
+                    boxShadow: '0 3px 15px 2px ' + this.colors[i % this.colors.length],
                   }}
                   key={i}
                 >
                   {
                     <CardItem
                       pokemon={item}
-                      img={`${urlImg}${id}.png?raw=true`} // TODO : decommenter si pas dans un environnement ou on se fout de notre gueule car on bosse avec des pokemon zebi
+                      img={`${urlImg}${id}.png?raw=true`}
                       id={id}
                       toDetail={this._toDetail}
                       changeType={this.TypeChange}
@@ -302,6 +286,8 @@ export default class Home extends React.Component {
               );
             })}
           </div>
+
+          <Pagify items={this.state.pokemons} onChangePage={this.onChangePage} />
         </div>
       );
     }

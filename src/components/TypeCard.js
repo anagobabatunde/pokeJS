@@ -15,8 +15,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function TypeCard(props) {
   const classes = useStyles();
-
-    console.log("c'est moi",props)
   if (props.moves) {
     return (
       <Paper className={classes.root}>

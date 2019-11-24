@@ -30,14 +30,16 @@ class CardItem extends React.Component {
         matches = e.flavor_text
       }
     });
-    // console.log("MATCH IS", matches);
     return matches;
+  }
+
+  firstLetterMaj(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
   componentDidMount() {
     this.setState({ isLoading: true });
     api.getPokemonDesc(this.props.id).then(data => {
-      // console.log(data.names[6].name) //pour du fr
       let text = null
       if (data == null || data.flavor_text_entries == null || data.flavor_text_entries[1] == null) {
         text = "No description available."
@@ -50,6 +52,7 @@ class CardItem extends React.Component {
   }
 
   render() {
+    let formattedName = this.firstLetterMaj(this.props.pokemon.name);
     return (
       <Card
         style={{ maxWidth: 300 }}
@@ -66,14 +69,14 @@ class CardItem extends React.Component {
               }}>
               <CardMedia
                 component="img"
-                alt="Contemplative Reptile"
+                alt={formattedName}
                 height="250"
                 image={this.props.img}
-                title="Contemplative Reptile"
+                title={formattedName}
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {this.props.pokemon.name}
+                  {formattedName}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
                    {this.state.desc}

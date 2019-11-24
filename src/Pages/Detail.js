@@ -5,19 +5,26 @@ import api from "../API/pokeApi";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import TypeCard from "../components/TypeCard";
 import DescCard from "../components/DescCard";
+
 const styles = {
     container: {
-        border: 'solid',
-        display: 'flex',
-        width: '100%',
-        height: '100%',
-        borderColor: 'red'
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        margin: "0 auto",
+        width: "70%",
     },
     spriteContainer: {
-        width: '100%',
+        width: '20%',
         height: '100%',
-        border: 'solid',
-        borderColor: 'yellow'
+        borderColor: 'yellow',
+        borderRadius: 4,
+    },
+    descContainer: {
+        width: '80%',
+        height: '100%',
+        borderColor: 'yellow',
+        borderRadius: 4,
     },
     TypeCardContainer: {
         width: '100%',
@@ -55,19 +62,19 @@ class Detail extends React.Component {
 
     _loadSpecs(id) {
         api.getPokemonById(id).then(data => {
-            // console.log(data)
             this.setState({sprites: data.sprites, types: data.types, moves: data.moves,name: data.name,id: data.id, isLoading: false}, () => {console.log("je suis la",this.state)});
         });
       }
     render() {
-        console.log("change type",this.props)
         if (!this.state.isLoading) {
             return (
                 <div style={styles.container}>
                     <div style={styles.spriteContainer}>
                         <CardSwiper sprites={this.state.sprites}/>
                     </div>
-                    <DescCard types={this.state.types} moves={this.state.moves} name={this.state.name} id={this.state.id} desc={this.props.location.state}/>
+                    <div style={styles.descContainer}>
+                        <DescCard types={this.state.types} moves={this.state.moves} name={this.state.name} id={this.state.id} desc={this.props.location.state}/>
+                    </div>
                 </div>
             )
         } else {
