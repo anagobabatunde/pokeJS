@@ -1,129 +1,106 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import { Link } from "react-router-dom";
+import api from "../API/pokeApi";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
-const useStyles = makeStyles(theme => ({
-  card: {
-    maxWidth: 200,
-    margin: 20
-  },
-  media: {
-    width: "100%",
-    // paddingTop: '56.25%', // 16:9
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
-  },
-  avatar: {
-    backgroundColor: red[500],
-  },
-}));
-export default function CardItem(props) {
-  const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+import { withRouter } from "react-router-dom";
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+class CardItem extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      desc: '',
+      isLoading: false,
+      // name: '',
+    };
+  }
 
-  return (
-    <Card className={classes.card}>
-      <CardHeader
-        avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            B
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={props.pokemon.name}
-        subheader="September 14, 2016"
-      />
-      {/*
-      <CardMedia
-        className={classes.media}
-        image={props.pokemon.sprites.front_default}
-        title="Paella dish"
-      />
-      */}
-      <img className={classes.media}
-        src={props.pokemon.sprites.front_default}
-       />
-      <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-        {props.pokemon.name}
-        {console.log(props.pokemon)}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-            minutes.
-          </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-            heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-            browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
-            and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
-            pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
-            without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
-            medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
-            again without stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don’t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
-          </Typography>
-        </CardContent>
-      </Collapse>
-    </Card>
-  );
+  findLanguageHelper(lang, arr) {
+    var matches = null;
+    arr.forEach(function(e) {
+      if (e.language.name === lang) {
+        matches = e.flavor_text
+      }
+    });
+    return matches;
+  }
+
+  firstLetterMaj(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  componentWillReceiveProps = (nextProps)=> {
+    if (nextProps.location.key !== this.props.location.key) {
+        window.location.reload();
+    }
+};
+
+  componentDidMount() {
+    this.setState({ isLoading: true });
+    api.getPokemonDesc(this.props.id).then(data => {
+      let text = null
+      if (data == null || data.flavor_text_entries == null || data.flavor_text_entries[1] == null) {
+        text = "No description available."
+        } else {
+        text = this.findLanguageHelper("en", data.flavor_text_entries)
+      }
+      this.setState({ desc: text, isLoading: false });
+    });
+   
+  }
+
+  render() {
+    let formattedName = this.firstLetterMaj(this.props.pokemon.name);
+    return (
+      <Card
+        style={{ maxWidth: 300 }}
+      >
+        {this.state.isLoading ? (
+          <LinearProgress />
+        ) : (
+          <div>
+            {" "}
+            <CardActionArea
+              onClick={() => {
+                this.props.history.push(
+                  `/Detail/${this.props.id}/${this.props.pokemon.name}`, this.state.desc);
+              }}>
+              <CardMedia
+                component="img"
+                alt={formattedName}
+                height="250"
+                image={this.props.img}
+                title={formattedName}
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {formattedName}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                   {this.state.desc}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions>
+            <Typography color="primary" variant="body2" component="p">
+                  Id : {this.props.id}
+                </Typography>
+                <Typography color="primary" variant="body2" component="p">
+                  Type: {this.props.pokemon.name}
+                </Typography>
+            </CardActions>
+          </div>
+        )}
+      </Card>
+    );
+  }
 }
+
+export default withRouter(CardItem);
