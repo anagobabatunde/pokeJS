@@ -36,6 +36,11 @@ class CardItem extends React.Component {
   firstLetterMaj(s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
+  componentWillReceiveProps = (nextProps)=> {
+    if (nextProps.location.key !== this.props.location.key) {
+        window.location.reload();
+    }
+};
 
   componentDidMount() {
     this.setState({ isLoading: true });

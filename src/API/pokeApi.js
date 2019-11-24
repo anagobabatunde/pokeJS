@@ -33,6 +33,10 @@ function getPokemonByUrl(url) {
     return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
 }
 
+function getEvolution(url) {
+    return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
+}
+
 function getPokemonById(id) {
     let url = 'https://pokeapi.co/api/v2/pokemon/' + id
     return fetch(url).then((response) => response.json()).catch((error) => console.log(error));
@@ -60,4 +64,4 @@ function getPokemonByXId(x ,id) {
 }
 
 
-export default { getPokemons, getSimple, getPokemonByXId, getPokemonDesc, getPokemonById, getPokemonByUrl, getPokemonsOffLim, getAllPokemons}
+export default { getPokemons, getSimple, getPokemonByXId, getPokemonDesc, getPokemonById, getPokemonByUrl, getPokemonsOffLim, getAllPokemons, getEvolution}
